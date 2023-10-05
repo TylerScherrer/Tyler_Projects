@@ -1,0 +1,39 @@
+
+public class DeckDriver {
+	public static void main(String[] args) {
+		
+		Deck Deck = new Deck();
+		
+		
+		while (!Deck.isEmptyDeck()) {
+            Card card = Deck.dealCard();
+            if (card != null) {
+            	Deck.shuffleDeck();
+                System.out.println(card.toString());						// Deals the full deck
+            } else {
+                System.out.println("The deck is empty.");
+            }
+        }
+
+		Deck.collectAllCards();												// Collects all the cards
+		
+		int cardsDealt = Deck.getCardsDealt();								// Gets the number of cards that have been dealt
+		
+		
+		System.out.println("\nAll cards have been collected " + cardsDealt);
+		
+		int halfDeal = 26;													// halfDeal is used to only deal a specific amount of cards the 2nd time through
+		Deck.specificDeal(halfDeal);										// Sets cardsCollected to a specific number to deal specific amount of cards 
+
+        Deck.shuffleDeck(30);												// Shuffles the deck 30 times, example for method 
+        
+		cardsDealt = Deck.getCardsDealt();									// Returns number of cards dealt to confirm it equals halfDeal
+	     	
+		Deck.Print();														// Prints the cards with print method
+		
+		
+		System.out.println("\n" + cardsDealt + " cards have been dealt ");
+		
+		
+}
+}
