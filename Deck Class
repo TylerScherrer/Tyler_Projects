@@ -1,0 +1,97 @@
+
+public class Deck {
+
+	private Card[] Deck = new Card[52];
+	private int cardsDealt;
+	private String suit;
+	private String value;
+	
+	
+	
+	public Deck() {
+		cardsDealt = 0;																// Constructor
+		String[] value = { "A", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+				"J", "Q", "K" };
+		String[] suit = { "Clubs", "Spades", "Hearts", "Diamonds" };
+		
+		for (int i = 0; i < 52; i++) {												// Initializes the deck with a loop
+			String suits = suit[i / 13];						
+			String rank = value[i % 13];
+			Deck[i] = new Card(rank, suits);
+			
+			
+			
+		}		
+	}
+	
+	
+	public void Print() {
+		for (int i = 0; i < this.cardsDealt; i++) {									// Prints the cards from 0 to cardsDealt
+			System.out.print("\n" + Deck[i]);
+	}
+	
+	}
+		
+	public int getCardsDealt() {													// Accessor
+		return this.cardsDealt;
+	}
+	
+	private void setCardsDealt(int cardsDealt) {									// Mutator
+		this.cardsDealt = cardsDealt;
+	}
+		
+	public void specificDeal(int cardsDealt) {										// Allows a specific amount of cards to be dealt with number passed as parameter
+		setCardsDealt(cardsDealt);
+	}
+	
+	
+	public boolean isEmptyDeck() {													// Checks to see if cardsDealt has reached 52, if 52 deck has been all dealt and is empty, if not 52 more cards to deal
+		if (this.cardsDealt == 52) {
+			return true;
+		}
+		else
+			return false;
+		}
+	
+	public void collectAllCards() {													// sets cardsDealt to 0, collects all the cards
+		setCardsDealt(0);
+	}
+	
+	public Card dealCard() {														// Deals card, as long as EmptyDeck is false, will continue to deal a card, increases cards dealt by 1 every loop
+		if (isEmptyDeck() == false) {
+			Card card = Deck[this.cardsDealt];
+			this.cardsDealt++;
+			return card;
+		}
+		else
+			return null;
+	}
+	
+	public String toString() {
+		String Card = this.value + " of " + this.suit ;								// Creates a String that allows card to be printed in a readable format
+		return Card;
+	}
+		
+	
+	public void shuffleDeck() {														// Performs shuffleDeck 100 times
+		shuffleDeck(100);										
+		}
+	
+	
+	public void shuffleDeck(int swapCnt) {
+		for (int i = 0; i < swapCnt; i++) {							
+			int random = (int) (Math.random() * 52 - 1);			
+			int randomTwo = (int) (Math.random() * 52 - 1);							// Performs a shuffle on the deck by swapping indexes swapCnt many times
+			Card temp = Deck[randomTwo];						
+			Deck[randomTwo] = Deck[random];							
+			Deck[random] = temp;
+		}
+	}
+	
+
+
+	
+
+
+	}
+
