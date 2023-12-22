@@ -15,48 +15,44 @@ class UserInterface(QtCore.QObject): #An object wrapping around our ui
         self.ui.save_button.clicked.connect(self.saveChanges)
         self.ui.addnew_button.clicked.connect(self.addNewTask)
         self.ui.save_button_2.clicked.connect(self.saveChangesTwo)
+//  This part of the UserInterface class is primarily responsible for setting up the user interface (UI) and connecting the various widgets (like buttons and the calendar widget)
+//  to specific functions (referred to as "slots" in Qt terminology) that should be executed when certain events occur (like clicks or selections). Let's break down what's happening:
+
+
+
 
     def saveChangesTwo(self):
         db = sqlite3.connect("newdb.db")
-        cursor = db.cursor()
-        newTasks = str(self.ui.text_Edit.text())
-        query = ("INSERT INTO Tasks(Task) VALUES (?)")
-        row = (newTasks)
-        cursor.execute(query, row)
+        cursor = db.cursor() // The cursor is created from the database connection. It's like a pointer that you use to interact with the database. Through the cursor, you can execute SQL commands.
+        newTasks = str(self.ui.text_Edit.text()) // This line gets the text that the user has entered into a text edit field in your application's 
+                                                //UI (presumably where they type the new task they want to add). It then converts that text to a string (if it isn't one already) and stores it in the newTasks variable.
+        query = ("INSERT INTO Tasks(Task) VALUES (?)") // This creates a SQL query as a string, which will insert a new row into the Tasks table. The ? is a placeholder for a value that you'll provide later
+        row = (newTasks) // This line creates a tuple containing the task description. This tuple corresponds to the placeholder (?) in the query. If you had multiple placeholders, you'd include more elements in this tuple
+        cursor.execute(query, row) // This tells the cursor to execute the SQL command (INSERT INTO Tasks(Task) VALUES (?)) 
+                                   // with the data you've specified (newTasks). Essentially, it's saying "Add a new row to the Tasks table with the task description being what the user entered
         db.commit()
-        # self.updateNotesList()
-
-    # def updateNotesList(self):
-    #     db = sqlite3.connect("newdb.db")
-    #     cursor = db.cursor()
-    #     query = "SELECT Task, Completed FROM Tasks WHERE Date = ?"
-    #     results = cursor.execute(query).fetchall()
-    #     for result in results:
-    #         item = QListWidgetItem(str(result[0]))
-    #         self.ui.text_Edit.addItem(item)
-
-
-
-
 
     def addNewTask(self):
         db = sqlite3.connect("newdb.db")
         cursor = db.cursor()
-        newTask = str(self.ui.lineEdit.text())
-        date = self.ui.calendarWidget.selectedDate().toPython()
+        newTask = str(self.ui.lineEdit.text()) //  This retrieves the text the user has entered into a lineEdit field in the UI, which presumably is 
+                                               // the description of the new task they want to add. It's then converted to a string (if it isn't one already) and stored in newTask.
+        date = self.ui.calendarWidget.selectedDate().toPython()  // retrieves the date currently selected in the calendar widget from the UI. This date is when the user wants the task to be scheduled.
 
-        query = "INSERT INTO Tasks(Task, Completed, Date) VALUES (?,?,?)"
+        query = "INSERT INTO Tasks(Task, Completed, Date) VALUES (?,?,?)" // This prepares an SQL query to insert a new record into the Tasks table. 
+                                                                          // The ? placeholders will be replaced with the task description, completion status, and date.
 
-        row = (newTask, "NO", date, )
+        row = (newTask, "NO", date, )  // This creates a tuple with the values to insert into the database: the new task's description, a default completion status ("NO"), and the selected date.
 
         
         cursor.execute(query, row)
         db.commit()
-        self.updateTaskList(date)
-        self.ui.lineEdit.clear()
+        self.updateTaskList(date) // After adding the new task, this line calls the updateTaskList method, 
+                                  // passing in the date for which the task was added. This method refreshes the list of tasks displayed in the UI, so it includes the new task.
+        self.ui.lineEdit.clear() // : Clears the text that the user entered into the lineEdit field. 
 
         messageBox = QMessageBox()
-        messageBox.setWindowTitle("Task Added.")
+        messageBox.setWindowTitle("Task Added.")                  // User feedback that the task has been added with a message box.
         messageBox.setText("Task Added.")
         messageBox.setStandardButtons(QMessageBox.Ok)
         messageBox.exec()
@@ -71,15 +67,16 @@ class UserInterface(QtCore.QObject): #An object wrapping around our ui
         date = self.ui.calendarWidget.selectedDate().toPython()
         
 
-        for i in range(self.ui.tasks_list.count())   :
-            item = self.ui.tasks_list.item(i)
-            Task = item.text()
-            if item.checkState() == QtCore.Qt.Checked:   
-                query = "UPDATE Tasks SET Completed = 'Yes' WHERE Task = ? AND Date = ?"
+        for i in range(self.ui.tasks_list.count())   :  //  This starts a loop that will iterate over all the items (tasks) in the tasks_list widget. 
+            item = self.ui.tasks_list.item(i) //  Retrieves the ith item (task) from the list.
+            Task = item.text() // Gets the text of the item, which is the description of the task.
+            if item.checkState() == QtCore.Qt.Checked:   // Checks if the task item is checked (indicating completion). QtCore.Qt.Checked is a constant representing the checked state.
+                query = "UPDATE Tasks SET Completed = 'Yes' WHERE Task = ? AND Date = ?" // If the item is checked, prepares an SQL query to update the Completed status
+                                                                                        // of the task to 'Yes' in the database for the given task description and date.
             else: 
-                query = "UPDATE Tasks SET Completed = 'No' WHERE Task = ? AND Date = ?"
-            row = (Task, date,)
-            cursor.execute(query, row)
+                query = "UPDATE Tasks SET Completed = 'No' WHERE Task = ? AND Date = ?" // Prepares an SQL query to update the Completed status of the task to 'No' for the given task description and date.
+            row = (Task, date,)  //  Creates a tuple with the current task description and date, which will be used to replace the placeholders in the SQL query.
+            cursor.execute(query, row) // Executes the SQL command with the specified data. This updates the Completed status of the current task in the database.
         db.commit()  
 
         messageBox = QMessageBox()
@@ -88,6 +85,9 @@ class UserInterface(QtCore.QObject): #An object wrapping around our ui
         messageBox.setStandardButtons(QMessageBox.Ok)
         messageBox.exec()
 
+// In summary, the saveChanges method iterates through all the tasks displayed in the UI, checking each one's completion status. It updates the Completed column in the Tasks table in the database
+// to reflect the current status of each task based on whether they are checked or not. After updating all the tasks,
+// it commits the changes to the database and informs the user that their changes have been saved with a message box.
         
 
         
@@ -104,16 +104,21 @@ class UserInterface(QtCore.QObject): #An object wrapping around our ui
         db = sqlite3.connect("newdb.db")
         cursor = db.cursor()
 
-        query = "SELECT Task, Completed FROM Tasks WHERE Date = ?"
+        query = "SELECT Task, Completed FROM Tasks WHERE Date = ?" // An SQL query is prepared to select the Task and Completed status from the Tasks table for tasks scheduled on the specified date.
         row = (date,)
-        results = cursor.execute(query, row).fetchall()
-        for result in results:
-            item = QListWidgetItem(str(result[0]))
-            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-            item.setCheckState(QtCore.Qt.Unchecked)
+        results = cursor.execute(query, row).fetchall() // The cursor executes the query with the given date. fetchall() retrieves all the rows that match the query, which are the tasks for the given date.
+        for result in results: 
+            item = QListWidgetItem(str(result[0])) // For each task, a new QListWidgetItem is created. This item represents the task in the UI's task list.
+            item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable) // Makes the list item checkable (i.e., the user can check or uncheck it, usually to represent task completion).
+            item.setCheckState(QtCore.Qt.Unchecked) //  If the task is marked as completed in the database ("Yes"), it sets the item's check state to checked. Otherwise, if it's "No", it ensures the item is unchecked.
             if result[1] == "Yes":
                 item.setCheckState(QtCore.Qt.Checked)
             elif result[1] == "No":
                 item.setCheckState(QtCore.Qt.Unchecked)
-            self.ui.tasks_list.addItem(item)
-       
+            self.ui.tasks_list.addItem(item) // Each configured list item (representing a task) is then added to the tasks_list widget in the UI.
+
+// Connecting to the database and retrieving tasks for a specific date.
+// Clearing the current tasks displayed in the UI.
+// Processing each task from the database and creating a corresponding checkable item in the UI's task list.
+// Reflecting the completion status of each task with a checked or unchecked state.
+// Updating the UI to show the tasks for the selected date, allowing users to see and interact with their schedule effectively.
